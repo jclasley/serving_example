@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -15,7 +16,7 @@ import (
 
 func main() {
 
-	noStrictSlash()
+	// noStrictSlash()
 	// First access `http://localhost:8080/home` and note that it says `JS has not loaded` -- this is the default HTML
 	// Next add a trailing slash, so it's `http://localhost:8080/home/` -- JS has worked???
 
@@ -24,6 +25,12 @@ func main() {
 
 	// vanillaServe()
 	// this just doesn't find the JS file at all -- check `Sources` tab under the chrome inspector
+
+	//ginFromRoot()
+	// note the errors
+
+	ginFromHome()
+
 }
 
 func strictSlash() {
@@ -44,4 +51,22 @@ func noStrictSlash() {
 func vanillaServe() {
 	http.Handle("/home", http.StripPrefix("/home", http.FileServer(http.Dir("./client/")))) // note no trailing slash
 	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func ginFromRoot() {
+	r := gin.Default()
+	r.StaticFS("/", http.Dir("./client"))
+	r.GET("/home", func (c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "receieved",
+		})
+	})
+}
+
+func ginFromHome() {
+	r := gin.Default()
+	r.StaticFS("/home", http.Dir("./client"))
+	r.GET("/", func (c *gin.Context) {
+		c.Redirect(http.StatusFound, "/home")
+	})
 }
