@@ -26,11 +26,10 @@ func main() {
 	// vanillaServe()
 	// this just doesn't find the JS file at all -- check `Sources` tab under the chrome inspector
 
-	//ginFromRoot()
+	ginFromRoot()
 	// note the errors
 
-	ginFromHome()
-
+	//ginFromHome()
 }
 
 func strictSlash() {
@@ -61,6 +60,7 @@ func ginFromRoot() {
 			"message": "receieved",
 		})
 	})
+	r.Run(":8080")
 }
 
 func ginFromHome() {
@@ -69,4 +69,5 @@ func ginFromHome() {
 	r.GET("/", func (c *gin.Context) {
 		c.Redirect(http.StatusFound, "/home")
 	})
+	r.Run(":8080")
 }
